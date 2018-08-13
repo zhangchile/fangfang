@@ -169,9 +169,9 @@ export default {
                 if (val.num < val.needsum) {
                     val.needsum = val.num;
                 }
-                val.sum = val.num*val.price;
-                val.needprice = val.needsum*val.price;
-                that.totalPrice += val.sum;
+                val.sum = parseFloat((val.num*val.price).toFixed(10));
+                val.needprice = parseFloat((val.needsum*val.price).toFixed(10));
+                that.totalPrice = parseFloat(that.totalPrice+val.sum).toFixed(10);
                 
                 return val;
             });
@@ -199,7 +199,7 @@ export default {
             // 判断是百分号还是数额
             if (target.substr(-1,1) == "%") {
                 // 百分号
-                target = parseFloat(target.substr(0, target.length-1)) / 100 * this.totalPrice;
+                target = parseFloat((parseFloat(target.substr(0, target.length-1)) / 100 * this.totalPrice).toFixed(10));
             } else {
                 target = parseFloat(target).toFixed(this.kaipiao.floatnum);
             }
