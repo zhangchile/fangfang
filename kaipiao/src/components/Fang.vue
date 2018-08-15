@@ -159,6 +159,9 @@ export default {
             for (var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
             return arr;
         },
+        _asFloat: function (v) {
+            return parseFloat(v.toFixed(10));
+        },
 
         changeParam: function () {
             var flag = false;
@@ -169,9 +172,10 @@ export default {
                 if (val.num < val.needsum) {
                     val.needsum = val.num;
                 }
-                val.sum = parseFloat((val.num*val.price).toFixed(10));
-                val.needprice = parseFloat((val.needsum*val.price).toFixed(10));
-                that.totalPrice = parseFloat(that.totalPrice+val.sum).toFixed(10);
+                val.sum = that._asFloat(val.num*val.price);
+                val.needprice =  that._asFloat(val.needsum*val.price);
+                that.totalPrice = that._asFloat(that.totalPrice + val.sum);
+                
                 
                 return val;
             });
@@ -199,7 +203,7 @@ export default {
             // 判断是百分号还是数额
             if (target.substr(-1,1) == "%") {
                 // 百分号
-                target = parseFloat((parseFloat(target.substr(0, target.length-1)) / 100 * this.totalPrice).toFixed(10));
+                target = this._asFloat(parseFloat(target.substr(0, target.length-1)) / 100 * this.totalPrice);
             } else {
                 target = parseFloat(target).toFixed(this.kaipiao.floatnum);
             }
@@ -214,7 +218,7 @@ export default {
             if (this.kaipiao.floatnum > 0) {
                 unit = unit / Math.pow(10, this.kaipiao.floatnum);
             }
-            console.log(unit)
+            // console.log(unit)
             var all = []; // 每一行所有的总数数组
             var allLen = []; // 每一行的长度
             var totalStep = 1;
@@ -237,8 +241,8 @@ export default {
                     totalStep *= group.length;
                 }
             });
-console.log(target)
-console.log(all)
+// console.log(target)
+// console.log(all)
             var resetLen = function (len, index) {
                 if (len[index] == 1 && index > 0) {
                     if (len[index-1]==1) {
@@ -267,7 +271,7 @@ console.log(all)
                     res_arr = [];
                     sumVal = 0;
                     all.forEach(function (item, index) {
-                        sumVal += parseFloat(item[allLen[index] - 1]);
+                        sumVal = that._asFloat(sumVal + parseFloat(item[allLen[index] - 1]));
                         res_arr.push(item[allLen[index] - 1]);
                     });
                     if (allLen[allLen.length - 1] > 1) {
@@ -281,7 +285,7 @@ console.log(all)
                     // }
                 } while (sumVal != target);
 
-                console.log('sumval='+sumVal)
+                // console.log('sumval='+sumVal)
                 that.loading = false;
                 if (fail) {
                     that.fail = true;
@@ -289,7 +293,7 @@ console.log(all)
 
                     that.fail = false;
                     res_arr.forEach(function (item, index) {
-                        that.tableData[index].needsum = item / that.tableData[index].price;
+                        that.tableData[index].needsum =  that._asFloat(item / that.tableData[index].price);
                         that.tableData[index].needprice = item;
                     })
                 }
@@ -302,14 +306,14 @@ console.log(all)
             // 判断是百分号还是数额
             if (target.substr(-1,1) == "%") {
                 // 百分号
-                return parseFloat(target.substr(0, target.length-1)) / 100 * this.totalPrice;
+                return this._asFloat(parseFloat(target.substr(0, target.length-1)) / 100 * this.totalPrice);
             }
             
         }
     },
     watch: {
         proStep: function(nv) {
-            console.log(nv)
+            // console.log(nv)
         }
     }
 }
